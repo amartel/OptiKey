@@ -719,9 +719,10 @@ namespace JuliusSweetland.OptiKey.Services
                         if (!string.IsNullOrEmpty(inProgressWord))
                         {
                             SwapText(inProgressWord, suggestionService.Suggestions[suggestionIndex]);
-                            var newSuggestions = suggestionService.Suggestions.ToList();
-                            newSuggestions.RemoveAt(suggestionIndex);
-                            StoreSuggestions(newSuggestions);
+                            ClearSuggestions();
+                            //var newSuggestions = suggestionService.Suggestions.ToList();
+                            //newSuggestions.RemoveAt(suggestionIndex);
+                            //StoreSuggestions(newSuggestions);
                         }
                     }
                 }
