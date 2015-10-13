@@ -322,12 +322,12 @@ namespace JuliusSweetland.OptiKey.Extensions
             if (!string.IsNullOrWhiteSpace(input)
                 && cursorIndex > 0
                 && cursorIndex <= input.Length
-                && !Char.IsWhiteSpace(input[cursorIndex-1])) //Character before cursor position is not whitespace, i.e. at least 1 letter of the word is before the cursor position
+                && !Char.IsWhiteSpace(input[cursorIndex-1]) && !Char.IsPunctuation(input[cursorIndex - 1])) //Character before cursor position is not whitespace, i.e. at least 1 letter of the word is before the cursor position
             {
                 //Count back
                 int startIndex = cursorIndex;
                 while (startIndex > 0
-                    && !Char.IsWhiteSpace(input[startIndex - 1]))
+                    && !Char.IsWhiteSpace(input[startIndex - 1]) && !Char.IsPunctuation(input[startIndex - 1]))
                 {
                     startIndex--;
                 }
@@ -335,7 +335,7 @@ namespace JuliusSweetland.OptiKey.Extensions
                 //Count forward
                 int endIndex = startIndex;
                 while (endIndex < input.Length
-                    && !Char.IsWhiteSpace(input[endIndex]))
+                    && !Char.IsWhiteSpace(input[endIndex]) && !Char.IsPunctuation(input[endIndex]))
                 {
                     endIndex++;
                 }
