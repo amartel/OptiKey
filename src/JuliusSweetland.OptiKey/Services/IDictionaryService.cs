@@ -5,6 +5,7 @@ using System.Threading;
 using System.Windows;
 using JuliusSweetland.OptiKey.Enums;
 using JuliusSweetland.OptiKey.Models;
+using presage;
 
 namespace JuliusSweetland.OptiKey.Services
 {
@@ -13,7 +14,7 @@ namespace JuliusSweetland.OptiKey.Services
         void LoadDictionary();
         bool ExistsInDictionary(string entryToFind);
         IEnumerable<DictionaryEntry> GetAllEntries();
-        IEnumerable<DictionaryEntry> GetAutoCompleteSuggestions(string root);
+        IEnumerable<DictionaryEntry> GetAutoCompleteSuggestions(string root, Presage prsg);
         void AddNewEntryToDictionary(string entry);
         void RemoveEntryFromDictionary(string entry);
         void IncrementEntryUsageCount(string entry);

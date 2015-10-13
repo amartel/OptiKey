@@ -11,6 +11,7 @@ using JuliusSweetland.OptiKey.Extensions;
 using JuliusSweetland.OptiKey.Models;
 using JuliusSweetland.OptiKey.Properties;
 using log4net;
+using presage;
 
 namespace JuliusSweetland.OptiKey.Services
 {
@@ -384,7 +385,7 @@ namespace JuliusSweetland.OptiKey.Services
 
         #region Get Auto Complete Suggestions
 
-        public IEnumerable<DictionaryEntry> GetAutoCompleteSuggestions(string root)
+        public IEnumerable<DictionaryEntry> GetAutoCompleteSuggestions(string root, Presage prsg)
         {
             Log.DebugFormat("GetAutoCompleteSuggestions called with root '{0}'", root);
 
@@ -394,7 +395,22 @@ namespace JuliusSweetland.OptiKey.Services
 
                 if (!string.IsNullOrWhiteSpace(simplifiedRoot))
                 {
-                    var enumerator = 
+                    if (prsg != null)
+                    {
+                        var dlist = new List<DictionaryEntry> { };
+                        foreach (string str in prsg.predict())
+                        {
+                            dlist.Add(new DictionaryEntry { Entry = str });
+                        }
+                        var enumerator = dlist.GetEnumerator();
+                        while (enumerator.MoveNext())
+                        {
+                            yield return enumerator.Current;
+                        }
+                    }
+                    else
+                    {
+                        var enumerator =
                         new List<DictionaryEntry> { new DictionaryEntry { Entry = root } } //Include the typed root as first result
                         .Union(entriesForAutoComplete
                                 .Where(kvp => kvp.Key.StartsWith(simplifiedRoot))
@@ -405,9 +421,10 @@ namespace JuliusSweetland.OptiKey.Services
                                 .ThenBy(de => de.Entry.Length))
                         .GetEnumerator();
 
-                    while (enumerator.MoveNext())
-                    {
-                        yield return enumerator.Current;
+                        while (enumerator.MoveNext())
+                        {
+                            yield return enumerator.Current;
+                        }
                     }
                 }
 

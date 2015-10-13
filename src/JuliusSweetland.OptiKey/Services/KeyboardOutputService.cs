@@ -8,6 +8,7 @@ using JuliusSweetland.OptiKey.Models;
 using JuliusSweetland.OptiKey.Properties;
 using log4net;
 using Prism.Mvvm;
+using presage;
 
 namespace JuliusSweetland.OptiKey.Services
 {
@@ -30,7 +31,9 @@ namespace JuliusSweetland.OptiKey.Services
         private bool suppressNextAutoSpace = true;
         private bool keyboardIsShiftAware;
         private bool shiftStateSetAutomatically;
-        
+
+        private Presage prsg;
+
         #endregion
 
         #region Ctor
@@ -524,6 +527,16 @@ namespace JuliusSweetland.OptiKey.Services
             lastTextChange = textChange;
         }
 
+        private string callback_get_past_stream()
+        {
+            int l = Text.Length > 500 ? Text.Length - 500 : 0;
+            return Text.Substring(l);
+        }
+        private string callback_get_future_stream()
+        {
+            return "";
+        }
+
         private void GenerateAutoCompleteSuggestions()
         {
             if (lastTextChange == null || lastTextChange.Length == 1) //Don't generate auto complete words if the last input was a multi key capture
@@ -536,8 +549,14 @@ namespace JuliusSweetland.OptiKey.Services
                         && Char.IsLetter(inProgressWord.First())) //A word must start with a letter
                     {
                         Log.DebugFormat("Generating auto complete suggestions from '{0}'.", inProgressWord);
-
-                        var suggestions = dictionaryService.GetAutoCompleteSuggestions(inProgressWord)
+                        if (System.Configuration.ConfigurationManager.AppSettings["UsePresage"].Equals("true", StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            prsg = new Presage(this.callback_get_past_stream, this.callback_get_future_stream);
+                        } else
+                        {
+                            prsg = null;
+                        }
+                        var suggestions = dictionaryService.GetAutoCompleteSuggestions(inProgressWord, prsg)
                             .Select(de => de.Entry)
                             .Take(Settings.Default.MaxDictionaryMatchesOrSuggestions)
                             .ToList();
