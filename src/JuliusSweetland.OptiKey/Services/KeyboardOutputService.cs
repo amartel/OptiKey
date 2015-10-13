@@ -549,7 +549,7 @@ namespace JuliusSweetland.OptiKey.Services
                         && Char.IsLetter(inProgressWord.First())) //A word must start with a letter
                     {
                         Log.DebugFormat("Generating auto complete suggestions from '{0}'.", inProgressWord);
-                        if (System.Configuration.ConfigurationManager.AppSettings["UsePresage"].Equals("true", StringComparison.InvariantCultureIgnoreCase))
+                        if ((System.Configuration.ConfigurationManager.AppSettings["UsePresage"] !=null) && System.Configuration.ConfigurationManager.AppSettings["UsePresage"].Equals("true", StringComparison.InvariantCultureIgnoreCase))
                         {
                             prsg = new Presage(this.callback_get_past_stream, this.callback_get_future_stream);
                         } else
